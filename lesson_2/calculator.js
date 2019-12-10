@@ -1,12 +1,12 @@
 const readline = require('readline-sync');
 const MESSAGES = require('./calculator_messages.json');
-const LANGUAGE = 'iw'; 
+const LANGUAGE = 'iw';
 
 function prompt(message) {
   console.log(`=> ${message}`);
 }
 
-function messages(message, lang='en') {
+function messages(message, lang = 'en') {
   return MESSAGES[lang][message];
 }
 
