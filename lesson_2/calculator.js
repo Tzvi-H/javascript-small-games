@@ -5,6 +5,7 @@
 // based on what the operation is, operate
 // on both numbers
 // print the result
+
 const readline = require('readline-sync');
 
 console.log('Welcome to the Calculator!');
