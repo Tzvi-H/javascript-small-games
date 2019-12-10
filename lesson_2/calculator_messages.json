@@ -1,9 +1,21 @@
 {
-  "welcome" : "Welcome to the Calculator!",
-  "operations": "What operation would you like to perform?\n1) Add 2) Subtract 3) Multiply 4) Divide",
-  "invalidOperation" : "Must choose 1, 2, 3, or 4",
-  "number1" : "What's the first number?",
-  "number2" : "What's the second number?",
-  "invalidNumber" : "Invalid number. Please enter a valid number.",
-  "goAgain" : "Would you like to perform another calculation? (y/n)"
+  "en" : {
+    "welcome" : "Welcome to the Calculator!",
+    "operations": "What operation would you like to perform?\n1) Add 2) Subtract 3) Multiply 4) Divide",
+    "invalidOperation" : "Invalid. You must choose 1, 2, 3, or 4",
+    "number1" : "What's the first number?",
+    "number2" : "What's the second number?",
+    "invalidNumber" : "Invalid. Please enter a valid number.",
+    "goAgain" : "Would you like to perform another calculation? (y/n)"
+  },
+
+  "iw" : {
+    "welcome" : "!ןובשחמל אבה ךורב",
+    "operations": "קולח )4 לפכה )3 רוסיח )2 ףסוה )1 ?עצבל הצרת הלועפ וזיא",
+    "invalidOperation" : "4 וא 3 ,2 ,1 רוחבל םכילע .יקוח אל",
+    "number1" : "?ןושארה רפסמה המ",
+    "number2" : "?ינשה רפסמה המ",
+    "invalidNumber" : ".ףקת רפסמ סנכה אנ .יקוח אל",
+    "goAgain" : "(y/n) ?ףסונ בושיח עצבל הצרת םאה"
+  }
 }
