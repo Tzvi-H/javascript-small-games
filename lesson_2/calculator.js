@@ -44,17 +44,22 @@ while (true) {
   let output;
   switch (operation) {
     case '1': output = Number(number1) + Number(number2);
-    break;
+              break;
     case '2': output = Number(number1) - Number(number2);
-    break;
+              break;
     case '3': output = Number(number1) * Number(number2);
-    break;
+              break;
     case '4': output = Number(number1) / Number(number2);
+              break;
   }
 
   prompt(`The result is ${output}`);
 
   prompt(messages('goAgain'));
-  let answer = READLINE.question();
-  if (answer[0].toLowerCase() !== 'y') break;
+  let answer = READLINE.question().toLowerCase();
+  while (!['yes', 'y', 'no', 'n'].includes(answer)) {
+    prompt(messages('invalidResponse'));
+    answer = READLINE.question().toLowerCase();
+  }
+  if (['no', 'n'].includes(answer)) break;
 }

@@ -5,6 +5,6 @@
   "aprRate"            : "Enter the APR rate\n(Example: 5 for 5% or 2.5 for 2.5%)",
   "loanYearsDuration"  : "Enter the loan duration (in years)",
   "invalidAmount"      : "INVALID\nEnter a number greater then 0\nInvalid characters ('$', ',', '_')",
-  "invalidResponse"    : "Enter yes(y) or no(n)",
-  "goAgain"            : "Would you like to perform another calculation?\nEnter yes/y or no/n"
+  "goAgain"            : "Would you like to perform another calculation?\nEnter yes/y or no/n",
+  "invalidResponse"    : "Enter yes(y) or no(n)"
 }

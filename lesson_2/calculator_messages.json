@@ -6,7 +6,8 @@
     "number1Prompt" : "What's the first number?",
     "number2Prompt" : "What's the second number?",
     "invalidNumber" : "Invalid. Please enter a valid number.",
-    "goAgain" : "Would you like to perform another calculation? (y/n)"
+    "goAgain" : "Would you like to perform another calculation?\nEnter yes/y or no/n",
+    "invalidResponse"    : "Enter yes(y) or no(n)"
   },
 
   "iw" : {
@@ -16,6 +17,7 @@
     "number1Prompt" : "?ןושארה רפסמה המ",
     "number2Prompt" : "?ינשה רפסמה המ",
     "invalidNumber" : ".ףקת רפסמ סנכה אנ .יקוח אל",
-    "goAgain" : "(y/n) ?ףסונ בושיח עצבל הצרת םאה"
+    "goAgain" : "(y/n) ?ףסונ בושיח עצבל הצרת םאה",
+    "invalidResponse"    : "Enter yes(y) or no(n)"
   }
 }
