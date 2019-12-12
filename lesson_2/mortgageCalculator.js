@@ -28,7 +28,7 @@ while (true) {
   let loanDurationYears = Number(READLINE.question());
   while (!(loanDurationYears > 0)) {
     prompt(MESSAGES['invalidAmount']);
-    loanDurationYears = READLINE.question();
+    loanDurationYears = Number(READLINE.question());
   }
 
   let annualInterestRate = aprRate / 100;
