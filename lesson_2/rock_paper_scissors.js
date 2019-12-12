@@ -19,7 +19,8 @@ let displayWinner = (userChoice, computerChoice) => {
   }
 };
 
-while (true) {
+let response;
+do {
   prompt(`Choose one: ${VALID_CHOICES.join(', ')}`);
   let userChoice = READLINE.question().toLowerCase();
   while (!VALID_CHOICES.includes(userChoice)) {
@@ -33,10 +34,10 @@ while (true) {
   displayWinner(userChoice, computerChoice);
 
   prompt('Do you want to play again? (yes/y) (no/n)');
-  let response = READLINE.question().toLowerCase();
+  response = READLINE.question().toLowerCase();
   while (!['yes', 'y', 'no', 'n'].includes(response)) {
     prompt(`'${response}' is an invalid input. Try again (yes/y) (no/n)`);
     response = READLINE.question().toLowerCase();
   }
   if (['no', 'n'].includes(response)) break;
-}
+} while (['yes', 'y'].includes(response));
