@@ -24,16 +24,16 @@ while (true) {
   }
 
   lineBreak();
-  prompt(MESSAGES['loanYearsDuration']);
-  let loanYearsDuration = Number(READLINE.question());
-  while (!(loanYearsDuration > 0)) {
+  prompt(MESSAGES['loanDurationYears']);
+  let loanDurationYears = Number(READLINE.question());
+  while (!(loanDurationYears > 0)) {
     prompt(MESSAGES['invalidAmount']);
-    loanYearsDuration = READLINE.question();
+    loanDurationYears = READLINE.question();
   }
 
   let annualInterestRate = aprRate / 100;
   let monthlyInterestRate = annualInterestRate / 12;
-  let loanMonthsDuration = loanYearsDuration * 12;
+  let loanMonthsDuration = loanDurationYears * 12;
 
   let monthlyPayment = loanAmount *
   (monthlyInterestRate /
@@ -44,7 +44,7 @@ while (true) {
   );
 
   lineBreak();
-  prompt(`Your monthly payment is: $${monthlyPayment.toFixed(2)}`);
+  prompt(`Your monthly payment is: $${monthlyPayment.toFixed(2)} over ${loanMonthsDuration} months.`);
 
   lineBreak();
   prompt(MESSAGES['goAgain']);
