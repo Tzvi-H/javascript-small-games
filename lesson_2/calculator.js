@@ -38,7 +38,7 @@ while (true) {
   let output;
 
   while (true) {
-    let invalidInput;
+    let invalidInput = false;
 
     switch (operation) {
       case '1': output = Number(number1) + Number(number2);
@@ -52,7 +52,7 @@ while (true) {
       default : invalidInput = true;
     }
 
-    if (invalidInput === true) {
+    if (invalidInput) {
       prompt(messages('invalidOperation'));
       operation = READLINE.question();
     } else {
