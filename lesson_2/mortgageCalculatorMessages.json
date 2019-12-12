@@ -6,5 +6,5 @@
   "loanDurationYears"  : "Enter the loan duration (in years)",
   "invalidAmount"      : "INVALID\nEnter a number greater then 0\nValid characters (0-9, '.')",
   "goAgain"            : "Would you like to perform another calculation?\nEnter yes/y or no/n",
-  "invalidResponse"    : "Enter yes(y) or no(n)"
+  "invalidResponse"    : "INVALID\nEnter yes(y) or no(n)"
 }
