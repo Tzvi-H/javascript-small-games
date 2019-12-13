@@ -1,13 +1,13 @@
 /* eslint-disable id-length */
 const READLINE = require('readline-sync');
-const CHOICES = {
+const INPUTS_TO_CHOICES = {
   r: 'rock',
   p: 'paper',
   sc: 'scissors',
   l: 'lizard',
   sp: 'spock'
 };
-const VALID_INPUTS = Object.keys(CHOICES);
+const VALID_INPUTS = Object.keys(INPUTS_TO_CHOICES);
 const WINNING_COMBOS = {
   rock:     ['scissors', 'lizard'],
   paper:    ['rock',     'spock'],
