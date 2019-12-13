@@ -32,6 +32,7 @@ function lineBreak() {
 function displayWelcomeMessage() {
   prompt(`Welcome to "${Object.values(ABBREVIATIONS_TO_CHOICES).join(' ')}."`);
   prompt(`The first to score ${WINNING_SCORE} wins the game!`);
+  lineBreak();
 }
 
 function displayRules() {
@@ -39,6 +40,7 @@ function displayRules() {
   for (let move in WINNING_COMBOS) {
     console.log(`${move} beats ${WINNING_COMBOS[move].join(' and ')}`);
   }
+  lineBreak();
 }
 
 function displayChoices() {
@@ -46,6 +48,18 @@ function displayChoices() {
   for (let abbreviation in ABBREVIATIONS_TO_CHOICES) {
     console.log(`'${abbreviation}' for ${ABBREVIATIONS_TO_CHOICES[abbreviation]}`);
   }
+}
+
+function getValidInput() {
+  displayChoices();
+  let input = READLINE.question();
+  while (!VALID_INPUTS.includes(input.toLowerCase())) {
+    lineBreak();
+    prompt(`'${input}' is invalid`);
+    displayChoices();
+    input = READLINE.question();
+  }
+  return input;
 }
 
 function getComputerChoice() {
@@ -73,57 +87,47 @@ function displayResults(userChoice, computerChoice) {
   } else {
     prompt("It's a tie");
   }
+  lineBreak();
 }
 
 function displayScore(userScore, computerScore) {
   prompt(`Score\nUser: ${userScore}\nComputer: ${computerScore}`);
+  lineBreak();
 }
-
-clearScreen();
-displayWelcomeMessage();
-lineBreak();
-displayRules();
-lineBreak();
 
 let userScore = 0;
 let computerScore = 0;
 
+clearScreen();
+displayWelcomeMessage();
+displayRules();
+
 while ((userScore < WINNING_SCORE) && (computerScore < WINNING_SCORE)) {
-  displayChoices();
-
-  let input = READLINE.question();
-  while (!VALID_INPUTS.includes(input.toLowerCase())) {
-    lineBreak();
-    prompt(`'${input}' is invalid`);
-    displayChoices();
-    input = READLINE.question();
-  }
-
-  let userChoice = CHOICES[input.toLowerCase()];
+  let input = getValidInput();
+  let userChoice = ABBREVIATIONS_TO_CHOICES[input.toLowerCase()];
   let computerChoice = getComputerChoice();
 
+  clearScreen();
+  displayResults(userChoice, computerChoice);
   if (userWins(userChoice, computerChoice)) {
     userScore += 1;
   } else if (computerWins(computerChoice, userChoice)) {
     computerScore += 1;
   }
-
-  clearScreen();
-  displayResults(userChoice, computerChoice);
-  lineBreak();
   displayScore(userScore, computerScore);
 
   if (userScore === WINNING_SCORE) {
-    prompt('User wins!\nThanks for playing!');
+    prompt(`You have ${WINNING_SCORE} wins. You win!`);
     break;
-  } else if (computerScore === 5) {
-    prompt('Computer wins!\nThanks for playing!');
+  } else if (computerScore === WINNING_SCORE) {
+    prompt(`Computer has ${WINNING_SCORE} wins. You lose!`);
     break;
   }
 
-  lineBreak();
   prompt("Enter 'q' to quit or any other key to continue");
   input = READLINE.question();
   if (input.toLowerCase() === 'q') break;
   clearScreen();
 }
+
+prompt('Thanks for playing.');
