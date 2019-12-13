@@ -1,13 +1,13 @@
 /* eslint-disable id-length */
 const READLINE = require('readline-sync');
-const INPUTS_TO_CHOICES = {
+const ABBREVIATIONS_TO_CHOICES = {
   r: 'rock',
   p: 'paper',
   sc: 'scissors',
   l: 'lizard',
   sp: 'spock'
 };
-const VALID_INPUTS = Object.keys(INPUTS_TO_CHOICES);
+const VALID_INPUTS = Object.keys(ABBREVIATIONS_TO_CHOICES);
 const WINNING_COMBOS = {
   rock:     ['scissors', 'lizard'],
   paper:    ['rock',     'spock'],
@@ -15,7 +15,7 @@ const WINNING_COMBOS = {
   lizard:   ['paper',    'spock'],
   spock:    ['rock',     'scissors'],
 };
-const WINNING_SCORE = 2;
+const WINNING_SCORE = 3;
 
 function prompt(message) {
   console.log(`=> ${message}`);
@@ -30,7 +30,7 @@ function lineBreak() {
 }
 
 function displayWelcomeMessage() {
-  prompt(`Welcome to "${Object.values(CHOICES).join(' ')}."`);
+  prompt(`Welcome to "${Object.values(ABBREVIATIONS_TO_CHOICES).join(' ')}."`);
   prompt(`The first to score ${WINNING_SCORE} wins the game!`);
 }
 
@@ -43,13 +43,13 @@ function displayRules() {
 
 function displayChoices() {
   prompt('Enter your choice');
-  for (let abbreviation in CHOICES) {
-    console.log(`'${abbreviation}' for ${CHOICES[abbreviation]}`);
+  for (let abbreviation in ABBREVIATIONS_TO_CHOICES) {
+    console.log(`'${abbreviation}' for ${ABBREVIATIONS_TO_CHOICES[abbreviation]}`);
   }
 }
 
 function getComputerChoice() {
-  let validChoices = Object.values(CHOICES);
+  let validChoices = Object.values(ABBREVIATIONS_TO_CHOICES);
   let randomIndex = Math.floor(Math.random() * validChoices.length);
   let randomChoice = validChoices[randomIndex];
   return randomChoice;
