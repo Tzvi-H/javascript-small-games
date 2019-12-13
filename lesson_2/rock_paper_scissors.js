@@ -1,5 +1,13 @@
+/* eslint-disable id-length */
 const READLINE = require('readline-sync');
-const VALID_CHOICES = ['rock', 'paper', 'scissors', 'lizard', 'spock'];
+const CHOICES = {
+  r: 'rock',
+  p: 'paper',
+  sc: 'scissors',
+  l: 'lizard',
+  sp: 'spock'
+};
+const VALID_INPUTS = Object.keys(CHOICES);
 const WINNING_COMBOS = {
   rock:     ['scissors', 'lizard'],
   paper:    ['rock',     'spock'],
@@ -7,32 +15,55 @@ const WINNING_COMBOS = {
   lizard:   ['paper',    'spock'],
   spock:    ['rock',     'scissors'],
 };
-
-function lineBreak() {
-  console.log();
-}
+const WINNING_SCORE = 2;
 
 function prompt(message) {
   console.log(`=> ${message}`);
 }
 
+function clearScreen() {
+  console.clear();
+}
+
+function lineBreak() {
+  console.log();
+}
+
+function displayWelcomeMessage() {
+  prompt(`Welcome to "${Object.values(CHOICES).join(' ')}."`);
+  prompt(`The first to score ${WINNING_SCORE} wins the game!`);
+}
+
 function displayRules() {
+  prompt('Here are the rules');
   for (let move in WINNING_COMBOS) {
-    console.log(`${move} wins over: ${WINNING_COMBOS[move].join(' and ')}`);
+    console.log(`${move} beats ${WINNING_COMBOS[move].join(' and ')}`);
   }
 }
 
 function displayChoices() {
-  VALID_CHOICES.forEach((choice, index) => console.log(`${index + 1}: ${choice}`));
+  prompt('Enter your choice');
+  for (let abbreviation in CHOICES) {
+    console.log(`'${abbreviation}' for ${CHOICES[abbreviation]}`);
+  }
 }
 
-function invalidNumberChoice(numberChoice) {
-  return (numberChoice <= 0) ||
-         (numberChoice > VALID_CHOICES.length) ||
-         (!Number.isInteger(numberChoice));
+function getComputerChoice() {
+  let validChoices = Object.values(CHOICES);
+  let randomIndex = Math.floor(Math.random() * validChoices.length);
+  let randomChoice = validChoices[randomIndex];
+  return randomChoice;
 }
 
-function displayWinner(userChoice, computerChoice) {
+function userWins(userChoice, computerChoice) {
+  return WINNING_COMBOS[userChoice].includes(computerChoice);
+}
+
+function computerWins(computerChoice, userChoice) {
+  return WINNING_COMBOS[computerChoice].includes(userChoice);
+}
+
+function displayResults(userChoice, computerChoice) {
   prompt(`You chose ${userChoice}, computer chose ${computerChoice}`);
 
   if (WINNING_COMBOS[userChoice].includes(computerChoice)) {
@@ -44,37 +75,55 @@ function displayWinner(userChoice, computerChoice) {
   }
 }
 
-prompt(`Welcome to ${VALID_CHOICES.join(' ')}.`);
+function displayScore(userScore, computerScore) {
+  prompt(`Score\nUser: ${userScore}\nComputer: ${computerScore}`);
+}
+
+clearScreen();
+displayWelcomeMessage();
 lineBreak();
 displayRules();
+lineBreak();
 
-// loop exits when goAgainResponse matches
-// the right criteria in the while statement
-let goAgainResponse;
-do {
-  lineBreak();
-  prompt('Enter a number');
+let userScore = 0;
+let computerScore = 0;
+
+while ((userScore < WINNING_SCORE) && (computerScore < WINNING_SCORE)) {
   displayChoices();
 
-  let numberChoice = Number(READLINE.question());
-  while (invalidNumberChoice(numberChoice)) {
-    prompt('Please enter a valid number');
+  let input = READLINE.question();
+  while (!VALID_INPUTS.includes(input.toLowerCase())) {
+    lineBreak();
+    prompt(`'${input}' is invalid`);
     displayChoices();
-    numberChoice = Number(READLINE.question());
+    input = READLINE.question();
   }
-  let userChoice = VALID_CHOICES[numberChoice - 1];
 
-  let randomIndex = Math.floor(Math.random() * VALID_CHOICES.length);
-  let computerChoice = VALID_CHOICES[randomIndex];
+  let userChoice = CHOICES[input.toLowerCase()];
+  let computerChoice = getComputerChoice();
 
-  displayWinner(userChoice, computerChoice);
+  if (userWins(userChoice, computerChoice)) {
+    userScore += 1;
+  } else if (computerWins(computerChoice, userChoice)) {
+    computerScore += 1;
+  }
+
+  clearScreen();
+  displayResults(userChoice, computerChoice);
+  lineBreak();
+  displayScore(userScore, computerScore);
+
+  if (userScore === WINNING_SCORE) {
+    prompt('User wins!\nThanks for playing!');
+    break;
+  } else if (computerScore === 5) {
+    prompt('Computer wins!\nThanks for playing!');
+    break;
+  }
 
   lineBreak();
-
-  prompt('Do you want to play again? (yes/y) (no/n)');
-  goAgainResponse = READLINE.question().toLowerCase();
-  while (!['yes', 'y', 'no', 'n'].includes(goAgainResponse)) {
-    prompt(`'${goAgainResponse}' is an invalid input. Try again (yes/y) (no/n)`);
-    goAgainResponse = READLINE.question().toLowerCase();
-  }
-} while (['yes', 'y'].includes(goAgainResponse));
+  prompt("Enter 'q' to quit or any other key to continue");
+  input = READLINE.question();
+  if (input.toLowerCase() === 'q') break;
+  clearScreen();
+}
