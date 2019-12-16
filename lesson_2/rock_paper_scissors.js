@@ -1,5 +1,5 @@
-/* eslint-disable id-length */
 const READLINE = require('readline-sync');
+/* eslint-disable id-length */
 const ABBREVIATIONS_TO_CHOICES = {
   r: 'rock',
   p: 'paper',
@@ -7,6 +7,8 @@ const ABBREVIATIONS_TO_CHOICES = {
   l: 'lizard',
   sp: 'spock'
 };
+/* eslint-enable id-length */
+
 const VALID_INPUTS = Object.keys(ABBREVIATIONS_TO_CHOICES);
 const WINNING_COMBOS = {
   rock:     ['scissors', 'lizard'],
@@ -25,14 +27,9 @@ function clearScreen() {
   console.clear();
 }
 
-function lineBreak() {
-  console.log();
-}
-
 function displayWelcomeMessage() {
   prompt(`Welcome to "${Object.values(ABBREVIATIONS_TO_CHOICES).join(' ')}."`);
-  prompt(`The first to score ${WINNING_SCORE} wins the game!`);
-  lineBreak();
+  prompt(`The first to score ${WINNING_SCORE} wins the game!\n`);
 }
 
 function displayRules() {
@@ -40,7 +37,7 @@ function displayRules() {
   for (let move in WINNING_COMBOS) {
     console.log(`${move} beats ${WINNING_COMBOS[move].join(' and ')}`);
   }
-  lineBreak();
+  console.log('\n');
 }
 
 function displayChoices() {
@@ -54,7 +51,7 @@ function getValidInput() {
   displayChoices();
   let input = READLINE.question();
   while (!VALID_INPUTS.includes(input.toLowerCase())) {
-    lineBreak();
+    console.log('\n');
     prompt(`'${input}' is invalid`);
     displayChoices();
     input = READLINE.question();
@@ -87,12 +84,12 @@ function displayResults(userChoice, computerChoice) {
   } else {
     prompt("It's a tie");
   }
-  lineBreak();
+  console.log('\n');
 }
 
 function displayScore(userScore, computerScore) {
   prompt(`Score\nUser: ${userScore}\nComputer: ${computerScore}`);
-  lineBreak();
+  console.log('\n');
 }
 
 let userScore = 0;
