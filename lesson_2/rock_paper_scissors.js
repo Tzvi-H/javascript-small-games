@@ -66,12 +66,14 @@ function getComputerChoice() {
   return randomChoice;
 }
 
-function userWins(userChoice, computerChoice) {
-  return WINNING_COMBOS[userChoice].includes(computerChoice);
-}
-
-function computerWins(computerChoice, userChoice) {
-  return WINNING_COMBOS[computerChoice].includes(userChoice);
+function detectWinner(userChoice, computerChoice) {
+  let winner;
+  if (WINNING_COMBOS[userChoice].includes(computerChoice)) {
+    winner = 'user';
+  } else if (WINNING_COMBOS[computerChoice].includes(userChoice)) {
+    winner = 'computer';
+  }
+  return winner;
 }
 
 function displayResults(userChoice, computerChoice) {
@@ -106,10 +108,11 @@ while ((userScore < WINNING_SCORE) && (computerScore < WINNING_SCORE)) {
 
   clearScreen();
   displayResults(userChoice, computerChoice);
-  if (userWins(userChoice, computerChoice)) {
-    userScore += 1;
-  } else if (computerWins(computerChoice, userChoice)) {
-    computerScore += 1;
+  switch (detectWinner(userChoice, computerChoice)) {
+    case 'user': userScore += 1;
+          break;
+    case 'computer': computerScore += 1;
+          break;
   }
   displayScore(userScore, computerScore);
 
