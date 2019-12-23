@@ -39,8 +39,10 @@ function createBoard() {
 
 function displayRules() {
   console.clear();
-  console.log(`First to score ${WINNING_SCORE} wins the game`);
-  console.log(`${PLAYER_NAME} is ${PLAYER_MARKER} ${COMPUTER_NAME} is ${COMPUTER_MARKER}`);
+  console.log('Tic-Tac-Toe');
+  console.log(`First to get 3 marks in a row wins the round`);
+  console.log(`First to win ${WINNING_SCORE} rounds wins the game`);
+  console.log(`\n${PLAYER_NAME} is ${PLAYER_MARKER} ${COMPUTER_NAME} is ${COMPUTER_MARKER}`);
 }
 
 function displayBoard(board) {
