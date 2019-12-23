@@ -1,4 +1,5 @@
 const READLINE = require('readline-sync');
+const WINNING_SCORE = 1;
 const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
@@ -17,6 +18,13 @@ const WINNING_LINES = [
   ...WINNING_DIAGONALS
 ];
 
+function joinOr(array, delimiter = ', ', lastDelimiter = 'or') {
+  if (array.length === 1) return array[0];
+  array = array.slice();
+  array[array.length - 1] = `${lastDelimiter} ${array[array.length - 1]}`;
+  return array.length > 2 ? array.join(delimiter) : array.join(' ');
+}
+
 function createBoard() {
   let board = {};
   for (let square = 1; square <= 9; square += 1) {
@@ -25,9 +33,14 @@ function createBoard() {
   return board;
 }
 
-function displayBoard(board) {
+function displayRules() {
   console.clear();
   console.log(`Your are ${PLAYER_MARKER}. Computer is ${COMPUTER_MARKER}`);
+  console.log(`First to score ${WINNING_SCORE} wins the game`);
+}
+
+function displayBoard(board) {
+  displayRules();
   console.log();
   console.log('     |     |');
   console.log(`  ${board['1']}  |  ${board['2']}  |  ${board['3']}`);
@@ -43,6 +56,11 @@ function displayBoard(board) {
   console.log();
 }
 
+function displayScore(playerScore, computerScore) {
+  console.log(`Player: ${playerScore}`);
+  console.log(`Computer: ${computerScore}\n`);
+}
+
 function emptySquares(board) {
   return Object
          .keys(board)
@@ -53,7 +71,7 @@ function playerChoosesSquare(board) {
   let availableSquares = emptySquares(board);
   let square;
   while (true) {
-    console.log(`Choose a square \n${availableSquares.join(', ')}`);
+    console.log(`Choose a square \n${joinOr(availableSquares)}`);
     square = READLINE.prompt();
     if (availableSquares.includes(square)) break;
     console.log(`\n'${square}' is an invalid square - Try again\n`);
@@ -91,7 +109,65 @@ function detectWinner(board) {
   return null;
 }
 
-function retrievePlayAgainChoice() {
+function newScores(playerScore, computerScore, winner) {
+  if (winner === 'Player') {
+    playerScore += 1;
+  } else if (winner === 'Computer') {
+    computerScore += 1;
+  }
+  return [playerScore, computerScore];
+}
+
+function playRound(playerScore, computerScore) {
+  let board = createBoard();
+  while (true) {
+    displayBoard(board);
+    displayScore(playerScore, computerScore);
+
+    playerChoosesSquare(board);
+    if (someoneWon(board) || isItFull(board)) break;
+
+    computerChoosesSquare(board);
+    if (someoneWon(board)) break;
+  }
+  displayBoard(board);
+  return board;
+}
+
+function displayAndUpdateScores(playerScore, computerScore, board) {
+  if (someoneWon(board)) {
+    let winner = detectWinner(board);
+    [playerScore, computerScore] = newScores(playerScore,
+                                            computerScore,
+                                            winner);
+    console.log(`${winner} won!`);
+  } else {
+    console.log("It's a tie!");
+  }
+  READLINE.question('\nEnter any key to continue ');
+  return [playerScore, computerScore];
+}
+
+function playRoundAndUpdateScores(playerScore, computerScore) {
+  let board = playRound(playerScore, computerScore);
+  [playerScore, computerScore] = displayAndUpdateScores(playerScore,
+                                                        computerScore,
+                                                        board);
+  return [playerScore, computerScore];
+}
+
+function playMatch() {
+  let playerScore = 0;
+  let computerScore = 0;
+  while (playerScore < WINNING_SCORE && computerScore < WINNING_SCORE) {
+    [playerScore, computerScore] = playRoundAndUpdateScores(playerScore,
+                                                            computerScore);
+  }
+  console.log('\nGAME OVER');
+  displayScore(playerScore, computerScore);
+}
+
+function retrieveGoAgainChoice() {
   let choice;
   while (true) {
     console.log('Do you want to play again? (yes/y) (no/n)');
@@ -102,27 +178,12 @@ function retrievePlayAgainChoice() {
   return choice.toLowerCase();
 }
 
-let playAgain;
+function goAgain() {
+  return ['yes', 'y'].includes(retrieveGoAgainChoice());
+}
+
 do {
-  let board = createBoard();
-  while (true) {
-    displayBoard(board);
+  playMatch();
+} while (goAgain());
 
-    playerChoosesSquare(board);
-    if (someoneWon(board) || isItFull(board)) break;
-
-    computerChoosesSquare(board);
-    if (someoneWon(board)) break;
-  }
-
-  displayBoard(board);
-  if (someoneWon(board)) {
-    console.log(`${detectWinner(board)} won!`);
-  } else {
-    console.log("It's a tie!");
-  }
-
-  playAgain = retrievePlayAgainChoice();
-} while (['yes', 'y'].includes(playAgain));
-
-console.log('\nGood bye.\nThanks for playing Tic Tac Toe!');
+console.log('\nThanks for playing Tic Tac Toe!\nGood bye.');
