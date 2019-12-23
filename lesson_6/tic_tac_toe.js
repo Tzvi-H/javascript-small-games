@@ -18,6 +18,8 @@ const WINNING_LINES = [
   ...WINNING_ROWS,
   ...WINNING_DIAGONALS
 ];
+const PLAYER_NAME = 'Player';
+const COMPUTER_NAME = 'Computer';
 
 function joinOr(array, delimiter = ', ', lastDelimiter = 'or') {
   if (array.length === 1) return array[0];
@@ -37,7 +39,7 @@ function createBoard() {
 function displayRules() {
   console.clear();
   console.log(`First to score ${WINNING_SCORE} wins the game`);
-  console.log(`Your are ${PLAYER_MARKER} Computer is ${COMPUTER_MARKER}`);
+  console.log(`${PLAYER_NAME} is ${PLAYER_MARKER} ${COMPUTER_NAME} is ${COMPUTER_MARKER}`);
 }
 
 function displayBoard(board) {
@@ -58,8 +60,8 @@ function displayBoard(board) {
 }
 
 function displayScore(playerScore, computerScore) {
-  console.log(`Player: ${playerScore}`);
-  console.log(`Computer: ${computerScore}\n`);
+  console.log(`${PLAYER_NAME}: ${playerScore}`);
+  console.log(`${COMPUTER_NAME}: ${computerScore}\n`);
 }
 
 function emptySquares(board) {
@@ -137,19 +139,19 @@ function detectWinner(board) {
   if (
       markers.some(line => line.every(square => square === PLAYER_MARKER))
   ) {
-    return 'Player';
+    return PLAYER_NAME;
   } else if (
       markers.some(line => line.every(square => square === COMPUTER_MARKER))
   ) {
-    return 'Computer';
+    return COMPUTER_NAME;
   }
   return null;
 }
 
 function newScores(playerScore, computerScore, winner) {
-  if (winner === 'Player') {
+  if (winner === PLAYER_NAME) {
     playerScore += 1;
-  } else if (winner === 'Computer') {
+  } else if (winner === COMPUTER_NAME) {
     computerScore += 1;
   }
   return [playerScore, computerScore];
