@@ -3,6 +3,7 @@ const WINNING_SCORE = 1;
 const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
+const CENTER_SQUARE = '5';
 const WINNING_COLUMNS = [
   ['1', '4', '7'], ['2', '5', '8'], ['3', '6', '9']
 ];
@@ -35,8 +36,8 @@ function createBoard() {
 
 function displayRules() {
   console.clear();
-  console.log(`Your are ${PLAYER_MARKER}. Computer is ${COMPUTER_MARKER}`);
   console.log(`First to score ${WINNING_SCORE} wins the game`);
+  console.log(`Your are ${PLAYER_MARKER} Computer is ${COMPUTER_MARKER}`);
 }
 
 function displayBoard(board) {
@@ -79,12 +80,48 @@ function playerChoosesSquare(board) {
   board[square] = PLAYER_MARKER;
 }
 
-function computerChoosesSquare(board) {
+function oneEmptyAndTwoSameMarkers(board, marker) {
+  let result;
+  for (let idx = 0; idx < WINNING_LINES.length; idx += 1) {
+    let line = WINNING_LINES[idx];
+    result = line.find(sqr => {
+      return (board[sqr] === EMPTY_MARKER) &&
+             (line.filter(otherSqr => otherSqr !== sqr)
+                .every(sqr => board[sqr] === marker));
+    });
+    if (result) break;
+  }
+  return result;
+}
+
+function winnableSquare(board) {
+  // Check computer's marker first, then player
+  let square = oneEmptyAndTwoSameMarkers(board, COMPUTER_MARKER);
+  if (square) return square;
+
+  square = oneEmptyAndTwoSameMarkers(board, PLAYER_MARKER);
+  if (square) return square;
+
+  return null;
+}
+
+function randomSquare(board) {
   let availableSquares = emptySquares(board);
   let randomIndex = Math.floor(Math.random() * availableSquares.length);
-  let square = availableSquares[randomIndex];
+  return availableSquares[randomIndex];
+}
+
+function computerChoosesSquare(board) {
+  let square;
+  let strategicSquare = winnableSquare(board);
+  if (strategicSquare) {
+    square = strategicSquare;
+  } else if (board[CENTER_SQUARE] === EMPTY_MARKER) {
+    square = CENTER_SQUARE;
+  } else {
+    square = randomSquare(board);
+  }
   board[square] = COMPUTER_MARKER;
-  console.clear();
 }
 
 function isItFull(board) {
