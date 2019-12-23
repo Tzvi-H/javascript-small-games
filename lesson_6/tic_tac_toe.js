@@ -1,9 +1,9 @@
 const READLINE = require('readline-sync');
 const PLAYER_NAME = 'Player';
 const COMPUTER_NAME = 'Computer';
-// FIRST_PLAYER can be PLAYER_NAME, COMPUTER_NAME, or 'choose'
+// FIRST_TURN can be PLAYER_NAME, COMPUTER_NAME, or 'choose'
 // (all other values are treated like 'choose')
-const FIRST_PLAYER = 'choose';
+const FIRST_TURN = PLAYER_NAME;
 const WINNING_SCORE = 2;
 const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
@@ -76,7 +76,7 @@ function emptySquares(board) {
          .filter(square => board[square] === EMPTY_MARKER);
 }
 
-function playerChoosesSquare(board) {
+function promptPlayerForSquare(board) {
   let availableSquares = emptySquares(board);
   let square;
   while (true) {
@@ -88,28 +88,26 @@ function playerChoosesSquare(board) {
   board[square] = PLAYER_MARKER;
 }
 
-function oneEmptyAndTwoSameMarkers(board, marker) {
-  let result;
+function emptySquareWith2SameMarkersInRow(board, marker) {
+  let square;
   for (let idx = 0; idx < WINNING_LINES.length; idx += 1) {
     let line = WINNING_LINES[idx];
-    result = line.find(sqr => {
+    square = line.find(sqr => {
       return (board[sqr] === EMPTY_MARKER) &&
              (line.filter(otherSqr => otherSqr !== sqr)
                 .every(sqr => board[sqr] === marker));
     });
-    if (result) break;
+    if (square) break;
   }
-  return result;
+  return square;
 }
 
 function winnableSquare(board) {
-  // Check computer's marker first, then player
-  let square = oneEmptyAndTwoSameMarkers(board, COMPUTER_MARKER);
-  if (square) return square;
+  // Check offense first (computer's marker), then defense (player's marker)
+  let square = emptySquareWith2SameMarkersInRow(board, COMPUTER_MARKER) ||
+               emptySquareWith2SameMarkersInRow(board, PLAYER_MARKER);
 
-  square = oneEmptyAndTwoSameMarkers(board, PLAYER_MARKER);
   if (square) return square;
-
   return null;
 }
 
@@ -120,19 +118,17 @@ function randomSquare(board) {
 }
 
 function computerChoosesSquare(board) {
-  let square;
-  let strategicSquare = winnableSquare(board);
-  if (strategicSquare) {
-    square = strategicSquare;
+  let offensiveOrDefensiveSquare = winnableSquare(board);
+  if (offensiveOrDefensiveSquare) {
+    board[offensiveOrDefensiveSquare] = COMPUTER_MARKER;
   } else if (board[CENTER_SQUARE] === EMPTY_MARKER) {
-    square = CENTER_SQUARE;
+    board[CENTER_SQUARE] = COMPUTER_MARKER;
   } else {
-    square = randomSquare(board);
+    board[randomSquare(board)] = COMPUTER_MARKER;
   }
-  board[square] = COMPUTER_MARKER;
 }
 
-function isItFull(board) {
+function isBoardFull(board) {
   return emptySquares(board).length === 0;
 }
 
@@ -141,13 +137,13 @@ function someoneWon(board) {
 }
 
 function detectWinner(board) {
-  let markers = WINNING_LINES.map(line => line.map(square => board[square]));
+  let lineMarkers = WINNING_LINES.map(line => line.map(sq => board[sq]));
   if (
-      markers.some(line => line.every(square => square === PLAYER_MARKER))
+      lineMarkers.some(line => line.every(marker => marker === PLAYER_MARKER))
   ) {
     return PLAYER_NAME;
   } else if (
-      markers.some(line => line.every(square => square === COMPUTER_MARKER))
+      lineMarkers.some(line => line.every(marker => marker === COMPUTER_MARKER))
   ) {
     return COMPUTER_NAME;
   }
@@ -165,13 +161,13 @@ function newScores(playerScore, computerScore, winner) {
 
 function chooseSquare(board, player) {
   if (player === PLAYER_NAME) {
-    playerChoosesSquare(board);
+    promptPlayerForSquare(board);
   } else if (player === COMPUTER_NAME) {
     computerChoosesSquare(board);
   }
 }
 
-function promptFirstPlayer() {
+function promptForFirstTurn() {
   let choice;
   console.clear();
   console.log('Welcome to Tic-Tac-Toe');
@@ -184,11 +180,11 @@ function promptFirstPlayer() {
   return choice[0] === 'y' ? PLAYER_NAME : COMPUTER_NAME;
 }
 
-function retrieveFirstPlayer() {
-  switch (FIRST_PLAYER) {
+function retrieveFirstTurn() {
+  switch (FIRST_TURN) {
     case PLAYER_NAME: return PLAYER_NAME;
     case COMPUTER_NAME: return COMPUTER_NAME;
-    default: return promptFirstPlayer();
+    default: return promptForFirstTurn();
   }
 }
 
@@ -200,12 +196,12 @@ function alternateCurrentPlayer(currentPlayer) {
 
 function playRound(playerScore, computerScore) {
   let board = createBoard();
-  let currentPlayer = retrieveFirstPlayer();
+  let currentPlayer = retrieveFirstTurn();
   while (true) {
     displayBoard(board);
     displayScore(playerScore, computerScore);
     chooseSquare(board, currentPlayer);
-    if (someoneWon(board) || isItFull(board)) break;
+    if (someoneWon(board) || isBoardFull(board)) break;
     currentPlayer = alternateCurrentPlayer(currentPlayer);
   }
   displayBoard(board);
