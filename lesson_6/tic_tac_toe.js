@@ -1,22 +1,21 @@
 const READLINE = require('readline-sync');
-const WELCOME_MESSAGE = 'Welcome to Tic-Tac-Toe';
 const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
+const WINNING_COLUMNS = [
+  ['1', '4', '7'], ['2', '5', '8'], ['3', '6', '9']
+];
+const WINNING_ROWS = [
+  ['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9']
+];
+const WINNING_DIAGONALS = [
+  ['1', '5', '9'], ['3', '5', '7']
+];
 const WINNING_LINES = [
-  ['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'],
-  ['1', '4', '7'], ['2', '5', '8'], ['3', '6', '9'],
-  ['1', '5', '8'], ['3', '5', '7']
-]
-
-function clearScreen() {
-  console.clear();
-}
-
-function displayWelcome() {
-  clearScreen();
-  console.log(WELCOME_MESSAGE);
-}
+  ...WINNING_COLUMNS,
+  ...WINNING_ROWS,
+  ...WINNING_DIAGONALS
+];
 
 function createBoard() {
   let board = {};
@@ -27,6 +26,8 @@ function createBoard() {
 }
 
 function displayBoard(board) {
+  console.clear();
+  console.log(`Your are ${PLAYER_MARKER}. Computer is ${COMPUTER_MARKER}`);
   console.log();
   console.log('     |     |');
   console.log(`  ${board['1']}  |  ${board['2']}  |  ${board['3']}`);
@@ -55,10 +56,7 @@ function playerChoosesSquare(board) {
     console.log(`Choose a square \n${availableSquares.join(', ')}`);
     square = READLINE.prompt();
     if (availableSquares.includes(square)) break;
-
-    clearScreen();
-    console.log(`'${square}' is an invalid square - Try again`);
-    displayBoard(board);
+    console.log(`\n'${square}' is an invalid square - Try again\n`);
   }
   board[square] = PLAYER_MARKER;
 }
@@ -68,10 +66,10 @@ function computerChoosesSquare(board) {
   let randomIndex = Math.floor(Math.random() * availableSquares.length);
   let square = availableSquares[randomIndex];
   board[square] = COMPUTER_MARKER;
-  clearScreen();
+  console.clear();
 }
 
-function full(board) {
+function isItFull(board) {
   return emptySquares(board).length === 0;
 }
 
@@ -80,34 +78,51 @@ function someoneWon(board) {
 }
 
 function detectWinner(board) {
-  let temp = WINNING_LINES.map(line => line.map(square => board[square]));
-  if (temp.some(line => line.every(square => square === PLAYER_MARKER))) {
-       return 'Player';
-     } else if (temp.some(
-              line => line.every(square => square === COMPUTER_MARKER)
-     )) {
-       return 'Computer';
-     }
-   return false;
+  let markers = WINNING_LINES.map(line => line.map(square => board[square]));
+  if (
+      markers.some(line => line.every(square => square === PLAYER_MARKER))
+  ) {
+    return 'Player';
+  } else if (
+      markers.some(line => line.every(square => square === COMPUTER_MARKER))
+  ) {
+    return 'Computer';
+  }
+  return null;
 }
 
-let board = createBoard();
-displayWelcome();
-displayBoard(board);
+function retrievePlayAgainChoice() {
+  let choice;
+  while (true) {
+    console.log('Do you want to play again? (yes/y) (no/n)');
+    choice = READLINE.prompt();
+    if (['yes', 'y', 'no', 'n'].includes(choice.toLowerCase())) break;
+    console.log(`\n'${choice}' is invalid.\n`);
+  }
+  return choice.toLowerCase();
+}
 
-while (true) {
-  playerChoosesSquare(board);
-  if (someoneWon(board) || full(board)) break;
-  computerChoosesSquare(board);
-  if (someoneWon(board)) break;
+let playAgain;
+do {
+  let board = createBoard();
+  while (true) {
+    displayBoard(board);
+
+    playerChoosesSquare(board);
+    if (someoneWon(board) || isItFull(board)) break;
+
+    computerChoosesSquare(board);
+    if (someoneWon(board)) break;
+  }
+
   displayBoard(board);
-}
+  if (someoneWon(board)) {
+    console.log(`${detectWinner(board)} won!`);
+  } else {
+    console.log("It's a tie!");
+  }
 
-clearScreen();
-displayBoard(board);
+  playAgain = retrievePlayAgainChoice();
+} while (['yes', 'y'].includes(playAgain));
 
-if (someoneWon(board)) {
-  console.log(`${detectWinner(board)} won!`)
-} else {
-  console.log("It's a tie!");
-}
+console.log('\nGood bye.\nThanks for playing Tic Tac Toe!');
