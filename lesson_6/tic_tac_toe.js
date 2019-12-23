@@ -1,5 +1,7 @@
 const READLINE = require('readline-sync');
-const WINNING_SCORE = 1;
+const PLAYER_NAME = 'Player';
+const COMPUTER_NAME = 'Computer';
+const WINNING_SCORE = 2;
 const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
@@ -18,8 +20,7 @@ const WINNING_LINES = [
   ...WINNING_ROWS,
   ...WINNING_DIAGONALS
 ];
-const PLAYER_NAME = 'Player';
-const COMPUTER_NAME = 'Computer';
+
 
 function joinOr(array, delimiter = ', ', lastDelimiter = 'or') {
   if (array.length === 1) return array[0];
