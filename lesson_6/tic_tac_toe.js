@@ -1,6 +1,9 @@
 const READLINE = require('readline-sync');
 const PLAYER_NAME = 'Player';
 const COMPUTER_NAME = 'Computer';
+// FIRST_PLAYER can be PLAYER_NAME, COMPUTER_NAME, or 'choose'
+// (all other values are treated like 'choose')
+const FIRST_PLAYER = 'choose';
 const WINNING_SCORE = 2;
 const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
@@ -160,17 +163,50 @@ function newScores(playerScore, computerScore, winner) {
   return [playerScore, computerScore];
 }
 
+function chooseSquare(board, player) {
+  if (player === PLAYER_NAME) {
+    playerChoosesSquare(board);
+  } else if (player === COMPUTER_NAME) {
+    computerChoosesSquare(board);
+  }
+}
+
+function promptFirstPlayer() {
+  let choice;
+  console.clear();
+  console.log('Welcome to Tic-Tac-Toe');
+  while (true) {
+    console.log('\nDo you want to go first? (yes/y) (no/n)');
+    choice = READLINE.prompt();
+    if (['yes', 'y', 'no', 'n'].includes(choice.toLowerCase())) break;
+    console.log(`\n'${choice}' is invalid.`);
+  }
+  return choice[0] === 'y' ? PLAYER_NAME : COMPUTER_NAME;
+}
+
+function retrieveFirstPlayer() {
+  switch (FIRST_PLAYER) {
+    case PLAYER_NAME: return PLAYER_NAME;
+    case COMPUTER_NAME: return COMPUTER_NAME;
+    default: return promptFirstPlayer();
+  }
+}
+
+function alternateCurrentPlayer(currentPlayer) {
+  return currentPlayer === PLAYER_NAME ?
+         COMPUTER_NAME :
+         PLAYER_NAME;
+}
+
 function playRound(playerScore, computerScore) {
   let board = createBoard();
+  let currentPlayer = retrieveFirstPlayer();
   while (true) {
     displayBoard(board);
     displayScore(playerScore, computerScore);
-
-    playerChoosesSquare(board);
+    chooseSquare(board, currentPlayer);
     if (someoneWon(board) || isItFull(board)) break;
-
-    computerChoosesSquare(board);
-    if (someoneWon(board)) break;
+    currentPlayer = alternateCurrentPlayer(currentPlayer);
   }
   displayBoard(board);
   return board;
@@ -209,7 +245,7 @@ function playMatch() {
   displayScore(playerScore, computerScore);
 }
 
-function retrieveGoAgainChoice() {
+function promptGoAgainChoice() {
   let choice;
   while (true) {
     console.log('Do you want to play again? (yes/y) (no/n)');
@@ -221,7 +257,7 @@ function retrieveGoAgainChoice() {
 }
 
 function goAgain() {
-  return ['yes', 'y'].includes(retrieveGoAgainChoice());
+  return ['yes', 'y'].includes(promptGoAgainChoice());
 }
 
 do {
