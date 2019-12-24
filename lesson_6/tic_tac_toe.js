@@ -3,7 +3,7 @@ const PLAYER_NAME = 'Player';
 const COMPUTER_NAME = 'Computer';
 // FIRST_TURN can be PLAYER_NAME, COMPUTER_NAME, or 'choose'
 // (all other values are treated like 'choose')
-const FIRST_TURN = '';
+const FIRST_TURN = 'choose';
 const WINNING_SCORE = 2;
 const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
@@ -194,9 +194,9 @@ function alternateCurrentPlayer(currentPlayer) {
          PLAYER_NAME;
 }
 
-function playRound(playerScore, computerScore) {
+function playRound(playerScore, computerScore, firstPlayer) {
   let board = createBoard();
-  let currentPlayer = retrieveFirstTurn();
+  let currentPlayer = firstPlayer;
   while (true) {
     displayBoard(board);
     displayScore(playerScore, computerScore);
@@ -222,8 +222,8 @@ function displayAndUpdateScores(playerScore, computerScore, board) {
   return [playerScore, computerScore];
 }
 
-function playRoundAndUpdateScores(playerScore, computerScore) {
-  let board = playRound(playerScore, computerScore);
+function playRoundAndUpdateScores(playerScore, computerScore, firstPlayer) {
+  let board = playRound(playerScore, computerScore, firstPlayer);
   [playerScore, computerScore] = displayAndUpdateScores(playerScore,
                                                         computerScore,
                                                         board);
@@ -246,11 +246,13 @@ function goAgain() {
 }
 
 function playMatch() {
+  let firstPlayer = retrieveFirstTurn();
   let playerScore = 0;
   let computerScore = 0;
   while (playerScore < WINNING_SCORE && computerScore < WINNING_SCORE) {
     [playerScore, computerScore] = playRoundAndUpdateScores(playerScore,
-                                                            computerScore);
+                                                            computerScore,
+                                                            firstPlayer);
   }
   console.log('\nGAME OVER');
   displayScore(playerScore, computerScore);
