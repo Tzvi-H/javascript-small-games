@@ -9,19 +9,10 @@ const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
 const CENTER_SQUARE = '5';
-const WINNING_COLUMNS = [
-  ['1', '4', '7'], ['2', '5', '8'], ['3', '6', '9']
-];
-const WINNING_ROWS = [
-  ['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9']
-];
-const WINNING_DIAGONALS = [
-  ['1', '5', '9'], ['3', '5', '7']
-];
 const WINNING_LINES = [
-  ...WINNING_COLUMNS,
-  ...WINNING_ROWS,
-  ...WINNING_DIAGONALS
+  ['1', '4', '7'], ['2', '5', '8'], ['3', '6', '9'], // Vertical rows
+  ['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], // Horizontal rows
+  ['1', '5', '9'], ['3', '5', '7']                   // Diagonal rows
 ];
 
 
@@ -40,6 +31,11 @@ function createBoard() {
   return board;
 }
 
+function displayGame(board) {
+  displayRules();
+  displayBoard(board);
+}
+
 function displayRules() {
   console.clear();
   console.log('Tic-Tac-Toe');
@@ -49,7 +45,6 @@ function displayRules() {
 }
 
 function displayBoard(board) {
-  displayRules();
   console.log();
   console.log('     |     |');
   console.log(`  ${board['1']}  |  ${board['2']}  |  ${board['3']}`);
@@ -136,18 +131,19 @@ function someoneWon(board) {
   return !!detectWinner(board);
 }
 
+function isMarkerWinner(marker, lineMarkers) {
+  return lineMarkers.some(line => line.every(lnMarker => lnMarker === marker));
+}
+
 function detectWinner(board) {
   let lineMarkers = WINNING_LINES.map(line => line.map(sq => board[sq]));
-  if (
-      lineMarkers.some(line => line.every(marker => marker === PLAYER_MARKER))
-  ) {
+  if (isMarkerWinner(PLAYER_MARKER, lineMarkers)) {
     return PLAYER_NAME;
-  } else if (
-      lineMarkers.some(line => line.every(marker => marker === COMPUTER_MARKER))
-  ) {
+  } else if (isMarkerWinner(COMPUTER_MARKER, lineMarkers)) {
     return COMPUTER_NAME;
+  } else {
+    return null;
   }
-  return null;
 }
 
 function newScores(playerScore, computerScore, winner) {
@@ -198,13 +194,13 @@ function playRound(playerScore, computerScore, firstPlayer) {
   let board = createBoard();
   let currentPlayer = firstPlayer;
   while (true) {
-    displayBoard(board);
+    displayGame(board);
     displayScore(playerScore, computerScore);
     chooseSquare(board, currentPlayer);
     if (someoneWon(board) || isBoardFull(board)) break;
     currentPlayer = alternateCurrentPlayer(currentPlayer);
   }
-  displayBoard(board);
+  displayGame(board);
   return board;
 }
 
