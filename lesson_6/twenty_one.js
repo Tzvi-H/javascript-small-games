@@ -91,6 +91,10 @@ function displayLastCard(playerHand) {
   console.log(`${PLAYER_NAME} was dealt the ${lastCard}\n`);
 }
 
+function busted(hand) {
+  return handValue(hand) > 21;
+}
+
 let deck = createDeck();
 let playerHand = dealCards(deck, 2);
 let dealerHand = dealCards(deck, 2);
@@ -108,4 +112,4 @@ do {
     console.clear();
     displayLastCard(playerHand);
   }
-} while (handValue(playerHand) <= 21);
+} while (!busted(playerHand));
