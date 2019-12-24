@@ -21,6 +21,13 @@ function createDeck() {
   return deck;
 }
 
+function shuffleDeck(deck) {
+  for (let idx = deck.length - 1; idx > 0; idx -= 1) {
+    let randomIndex = Math.floor(Math.random() * (idx + 1));
+    [deck[idx], deck[randomIndex]] = [deck[randomIndex], deck[idx]];
+  }
+}
+
 function dealCard(deck) {
   return deck.pop();
 }
@@ -95,17 +102,10 @@ function busted(hand) {
   return handValue(hand) > 21;
 }
 
-function dealToPlayer(deck, hand) {
+function dealToPlayer(hand, deck) {
   hand.push(dealCard(deck));
   console.clear();
   displayLastCard(hand, PLAYER_NAME);
-}
-
-function shuffleDeck(deck) {
-  for (let idx = deck.length - 1; idx > 0; idx -= 1) {
-    let randomIndex = Math.floor(Math.random() * (idx + 1));
-    [deck[idx], deck[randomIndex]] = [deck[randomIndex], deck[idx]];
-  }
 }
 
 let deck = createDeck();
@@ -121,5 +121,5 @@ do {
   displayFullCards(playerHand, PLAYER_NAME);
   displayPartialCards(dealerHand, DEALER_NAME);
   if (promptStay()) break;
-  dealToPlayer(deck, playerHand);
+  dealToPlayer(playerHand, deck);
 } while (!busted(playerHand));
