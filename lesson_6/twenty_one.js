@@ -81,18 +81,25 @@ function promptStay() {
 function retrieveValidInput(validInputs) {
   let input = READLINE.prompt();
   while (!validInputs.includes(input.toLowerCase())) {
-    input = READLINE.question(`'${input}' is Invalid. Enter a valid input`);
+    console.log(`'${input}' is Invalid. Enter a valid input`);
+    input = READLINE.prompt();
   }
   return input;
 }
 
-function displayLastCard(playerHand) {
-  let lastCard = cardInfo(playerHand[playerHand.length - 1]);
-  console.log(`${PLAYER_NAME} was dealt the ${lastCard}\n`);
+function displayLastCard(hand, name) {
+  let lastCard = cardInfo(hand[hand.length - 1]);
+  console.log(`${name} was dealt the ${lastCard}\n`);
 }
 
 function busted(hand) {
   return handValue(hand) > 21;
+}
+
+function dealToPlayer(deck, hand) {
+  hand.push(dealCard(deck));
+  console.clear();
+  displayLastCard(hand, PLAYER_NAME);
 }
 
 let deck = createDeck();
@@ -105,11 +112,6 @@ console.log('Welcome to 21!\n');
 do {
   displayFullCards(playerHand, PLAYER_NAME);
   displayPartialCards(dealerHand, DEALER_NAME);
-  if (promptStay()) {
-    break;
-  } else {
-    playerHand.push(dealCard(deck));
-    console.clear();
-    displayLastCard(playerHand);
-  }
+  if (promptStay()) break;
+  dealToPlayer(deck, playerHand);
 } while (!busted(playerHand));
