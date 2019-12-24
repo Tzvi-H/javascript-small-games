@@ -5,9 +5,11 @@ const RANKS = [
   'Jack', 'Queen', 'King', 'Ace'
 ];
 const RANK_VALUES = {
-  2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9,
-  10: 10, Jack: 10, Queen: 10, King: 10, Ace: 11
+  2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9,10: 10, 
+  Jack: 10, Queen: 10, King: 10, Ace: 11
 };
+const DEALER_NAME = 'Dealer';
+const PLAYER_NAME = 'Player';
 
 function createDeck() {
   let deck = [];
@@ -59,19 +61,51 @@ function cardInfo(card) {
   return `${card.rank} of ${card.suit}`;
 }
 
-function displayCards(playerHand, dealerHand) {
-  let playerValue = handValue(playerHand);
-  let playerCards = playerHand.map(card => `[${cardInfo(card)}]`).join(' ');
-  console.log("Player cards:", playerCards, `(${playerValue})`);
-  console.log("Dealer cards:", `[${cardInfo(dealerHand[0])}] [? of ?] (?)`);
+function displayFullCards(hand, name) {
+  let cards = hand.map(card => `[${cardInfo(card)}]`).join(' ');
+  let value = handValue(hand);
+  console.log(`${name} cards: ${cards} (${value})`);
 }
 
+function displayPartialCards(hand, name) {
+  let card = cardInfo(hand[0]);
+  console.log(`${name} cards: [${card}] [? of ?] (?)`);
+}
+
+function promptStay() {
+  console.log('\nHit(h) or Stay(s)?');
+  let input = retrieveValidInput(['hit', 'h', 'stay', 's']);
+  return ['stay', 's'].includes(input.toLowerCase());
+}
+
+function retrieveValidInput(validInputs) {
+  let input = READLINE.prompt();
+  while (!validInputs.includes(input.toLowerCase())) {
+    input = READLINE.question(`'${input}' is Invalid. Enter a valid input`);
+  }
+  return input;
+}
+
+function displayLastCard(playerHand) {
+  let lastCard = cardInfo(playerHand[playerHand.length - 1]);
+  console.log(`${PLAYER_NAME} was dealt the ${lastCard}\n`);
+}
 
 let deck = createDeck();
 let playerHand = dealCards(deck, 2);
 let dealerHand = dealCards(deck, 2);
 
-do {
-  displayCards(playerHand, dealerHand);
+console.clear();
+console.log('Welcome to 21!\n');
 
-} while (false);
+do {
+  displayFullCards(playerHand, PLAYER_NAME);
+  displayPartialCards(dealerHand, DEALER_NAME);
+  if (promptStay()) {
+    break;
+  } else {
+    playerHand.push(dealCard(deck));
+    console.clear();
+    displayLastCard(playerHand);
+  }
+} while (handValue(playerHand) <= 21);
