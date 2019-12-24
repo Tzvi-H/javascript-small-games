@@ -160,16 +160,16 @@ if (!busted(playerHand)) {
   }
 }
 
+console.clear();
 if (busted(playerHand)) {
+  displayLastCard(playerHand, PLAYER_NAME);
   displayBothHands(playerHand, dealerHand);
   displayBust(PLAYER_NAME, playerHand);
 } else if (busted(dealerHand)) {
-  console.clear();
   displayBothHands(playerHand, dealerHand);
   displayBust(DEALER_NAME, dealerHand);
 } else {
   let winner = calculateWinner(playerHand, dealerHand);
-  console.clear();
   displayBothHands(playerHand, dealerHand);
   displayWinner(winner);
 }
