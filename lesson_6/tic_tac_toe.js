@@ -3,7 +3,7 @@ const PLAYER_NAME = 'Player';
 const COMPUTER_NAME = 'Computer';
 // FIRST_TURN can be PLAYER_NAME, COMPUTER_NAME, or 'choose'
 // (all other values are treated like 'choose')
-const FIRST_TURN = PLAYER_NAME;
+const FIRST_TURN = '';
 const WINNING_SCORE = 2;
 const EMPTY_MARKER = ' ';
 const PLAYER_MARKER = 'X';
@@ -43,7 +43,7 @@ function createBoard() {
 function displayRules() {
   console.clear();
   console.log('Tic-Tac-Toe');
-  console.log(`First to get 3 marks in a row wins the round`);
+  console.log(`First to get 3 markers in a row wins the round`);
   console.log(`First to win ${WINNING_SCORE} rounds wins the game`);
   console.log(`\n${PLAYER_NAME} is ${PLAYER_MARKER} ${COMPUTER_NAME} is ${COMPUTER_MARKER}`);
 }
@@ -97,9 +97,9 @@ function emptySquareWith2SameMarkersInRow(board, marker) {
              (line.filter(otherSqr => otherSqr !== sqr)
                 .every(sqr => board[sqr] === marker));
     });
-    if (square) break;
+    if (square) return square;
   }
-  return square;
+  return null;
 }
 
 function winnableSquare(board) {
@@ -177,7 +177,7 @@ function promptForFirstTurn() {
     if (['yes', 'y', 'no', 'n'].includes(choice.toLowerCase())) break;
     console.log(`\n'${choice}' is invalid.`);
   }
-  return choice[0] === 'y' ? PLAYER_NAME : COMPUTER_NAME;
+  return choice[0].toLowerCase() === 'y' ? PLAYER_NAME : COMPUTER_NAME;
 }
 
 function retrieveFirstTurn() {
@@ -230,17 +230,6 @@ function playRoundAndUpdateScores(playerScore, computerScore) {
   return [playerScore, computerScore];
 }
 
-function playMatch() {
-  let playerScore = 0;
-  let computerScore = 0;
-  while (playerScore < WINNING_SCORE && computerScore < WINNING_SCORE) {
-    [playerScore, computerScore] = playRoundAndUpdateScores(playerScore,
-                                                            computerScore);
-  }
-  console.log('\nGAME OVER');
-  displayScore(playerScore, computerScore);
-}
-
 function promptGoAgainChoice() {
   let choice;
   while (true) {
@@ -254,6 +243,17 @@ function promptGoAgainChoice() {
 
 function goAgain() {
   return ['yes', 'y'].includes(promptGoAgainChoice());
+}
+
+function playMatch() {
+  let playerScore = 0;
+  let computerScore = 0;
+  while (playerScore < WINNING_SCORE && computerScore < WINNING_SCORE) {
+    [playerScore, computerScore] = playRoundAndUpdateScores(playerScore,
+                                                            computerScore);
+  }
+  console.log('\nGAME OVER');
+  displayScore(playerScore, computerScore);
 }
 
 do {
