@@ -22,8 +22,7 @@ function createDeck() {
 }
 
 function dealCard(deck) {
-  let randomIndex = Math.floor(Math.random() * deck.length);
-  return deck.splice(randomIndex, 1)[0];
+  return deck.pop();
 }
 
 function dealCards(deck, dealCount) {
@@ -102,7 +101,16 @@ function dealToPlayer(deck, hand) {
   displayLastCard(hand, PLAYER_NAME);
 }
 
+function shuffleDeck(deck) {
+  for (let idx = deck.length - 1; idx > 0; idx -= 1) {
+    let randomIndex = Math.floor(Math.random() * (idx + 1));
+    [deck[idx], deck[randomIndex]] = [deck[randomIndex], deck[idx]];
+  }
+}
+
 let deck = createDeck();
+shuffleDeck(deck);
+
 let playerHand = dealCards(deck, 2);
 let dealerHand = dealCards(deck, 2);
 
