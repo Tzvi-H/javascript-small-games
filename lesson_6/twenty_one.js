@@ -124,12 +124,17 @@ function displayWinner(winner) {
   if (winner === 'tie') {
     console.log(`\nIt's a tie!`);
   } else {
-    console.log(`${winner} has won!`);
+    console.log(`\n${winner} wins!`);
   }
 }
 
 function displayBust(name, hand) {
-  console.log(`${name} busted with ${handValue(hand)}!`);
+  console.log(`\n${name} busts with ${handValue(hand)}!`);
+}
+
+function displayBothHands(playerHand, dealerHand) {
+  displayFullCards(playerHand, PLAYER_NAME);
+  displayFullCards(dealerHand, DEALER_NAME);
 }
 
 let deck = createDeck();
@@ -144,8 +149,9 @@ console.log('Welcome to 21!\n');
 while (true) {
   displayFullCards(playerHand, PLAYER_NAME);
   displayPartialCards(dealerHand, DEALER_NAME);
-  if (busted(playerHand) || promptStay()) break;
+  if (promptStay()) break;
   dealToPlayer(playerHand, deck);
+  if (busted(playerHand)) break;
 }
 
 if (!busted(playerHand)) {
@@ -155,10 +161,15 @@ if (!busted(playerHand)) {
 }
 
 if (busted(playerHand)) {
+  displayBothHands(playerHand, dealerHand);
   displayBust(PLAYER_NAME, playerHand);
 } else if (busted(dealerHand)) {
+  console.clear();
+  displayBothHands(playerHand, dealerHand);
   displayBust(DEALER_NAME, dealerHand);
 } else {
   let winner = calculateWinner(playerHand, dealerHand);
+  console.clear();
+  displayBothHands(playerHand, dealerHand);
   displayWinner(winner);
 }
