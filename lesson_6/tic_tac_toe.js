@@ -204,7 +204,7 @@ function playRound(playerScore, computerScore, firstPlayer) {
   return board;
 }
 
-function displayAndUpdateScores(playerScore, computerScore, board) {
+function updateScores(playerScore, computerScore, board) {
   if (someoneWon(board)) {
     let winner = detectWinner(board);
     [playerScore, computerScore] = newScores(playerScore,
@@ -215,14 +215,6 @@ function displayAndUpdateScores(playerScore, computerScore, board) {
     console.log("It's a tie!");
   }
   READLINE.question('\nEnter any key to continue ');
-  return [playerScore, computerScore];
-}
-
-function playRoundAndUpdateScores(playerScore, computerScore, firstPlayer) {
-  let board = playRound(playerScore, computerScore, firstPlayer);
-  [playerScore, computerScore] = displayAndUpdateScores(playerScore,
-                                                        computerScore,
-                                                        board);
   return [playerScore, computerScore];
 }
 
@@ -246,9 +238,11 @@ function playMatch() {
   let playerScore = 0;
   let computerScore = 0;
   while (playerScore < WINNING_SCORE && computerScore < WINNING_SCORE) {
-    [playerScore, computerScore] = playRoundAndUpdateScores(playerScore,
-                                                            computerScore,
-                                                            firstPlayer);
+    let board = playRound(playerScore, computerScore, firstPlayer);
+    [playerScore, computerScore] = updateScores(playerScore,
+                                                computerScore,
+                                                board);
+    displayScore(playerScore, computerScore);
   }
   console.log('\nGAME OVER');
   displayScore(playerScore, computerScore);
