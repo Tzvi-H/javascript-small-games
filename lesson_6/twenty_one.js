@@ -101,7 +101,7 @@ function displayBothHands(playerHand, dealerHand) {
   displayFullCards(dealerHand, DEALER_NAME);
 }
 
-function promptStay() {
+function promptHitOrStay() {
   console.log('\nHit(h) or Stay(s)?');
   let input = retrieveValidInput(['hit', 'h', 'stay', 's']);
   console.log();
@@ -125,7 +125,7 @@ function playerTurn(playerHand, dealerHand, deck) {
   while (true) {
     displayFullCards(playerHand, PLAYER_NAME);
     displayPartialCards(dealerHand, DEALER_NAME);
-    if (promptStay()) break;
+    if (promptHitOrStay()) break;
     addCardToHand(playerHand, deck);
     displayLastCard(playerHand, PLAYER_NAME);
     if (busted(playerHand)) break;
