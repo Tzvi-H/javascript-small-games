@@ -1,4 +1,6 @@
 const READLINE = require('readline-sync');
+const GAME_VALUE = 21;
+const DEALER_STOP_VALUE = 17;
 const DEALER_NAME = 'Dealer';
 const PLAYER_NAME = 'Player';
 const SUITS = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
@@ -9,7 +11,11 @@ const RANK_VALUES = { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9,10: 10,
 
 function displayWelcomeMsg() {
   console.clear();
-  console.log('Welcome to 21!\n');
+  console.log(`Welcome to ${GAME_VALUE}!\n`);
+}
+
+function displayGoodbyeMsg() {
+  console.log(`Thanks for playing ${GAME_VALUE}`);
 }
 
 function createDeck() {
@@ -62,7 +68,7 @@ function acesQty(hand) {
 
 function adjustAceValues(value, hand) {
   let aces = acesQty(hand);
-  while (value > 21 && aces >= 1) {
+  while (value > GAME_VALUE && aces >= 1) {
     value -= 10;
     aces -= 1;
   }
@@ -111,7 +117,7 @@ function retrieveValidInput(validInputs) {
 }
 
 function busted(hand) {
-  return handValue(hand) > 21;
+  return handValue(hand) > GAME_VALUE;
 }
 
 function playerTurn(playerHand, dealerHand, deck) {
@@ -127,7 +133,7 @@ function playerTurn(playerHand, dealerHand, deck) {
 
 function dealerTurn(playerHand, dealerHand, deck) {
   if (!busted(playerHand)) {
-    while (handValue(dealerHand) < 17) {
+    while (handValue(dealerHand) < DEALER_STOP_VALUE) {
       addCardToHand(dealerHand, deck);
     }
   }
@@ -169,12 +175,22 @@ function displayResult(playerHand, dealerHand) {
   displayBothHands(playerHand, dealerHand);
 }
 
-displayWelcomeMsg();
+function playAgain() {
+  console.log('\nWould you like to play again? yes(y) no(n)');
+  let input = retrieveValidInput(['yes', 'y', 'no', 'n']);
+  return ['yes', 'y'].includes(input.toLowerCase());
+}
 
-let deck = createDeck();
-let playerHand = dealCards(deck, 2);
-let dealerHand = dealCards(deck, 2);
+do {
+  displayWelcomeMsg();
 
-playerTurn(playerHand, dealerHand, deck);
-dealerTurn(playerHand, dealerHand, deck);
-displayResult(playerHand, dealerHand);
+  let deck = createDeck();
+  let playerHand = dealCards(deck, 2);
+  let dealerHand = dealCards(deck, 2);
+
+  playerTurn(playerHand, dealerHand, deck);
+  dealerTurn(playerHand, dealerHand, deck);
+  displayResult(playerHand, dealerHand);
+} while (playAgain());
+
+displayGoodbyeMsg();
