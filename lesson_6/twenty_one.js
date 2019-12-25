@@ -1,5 +1,6 @@
 const READLINE = require('readline-sync');
 const GAME_VALUE = 21;
+const MAX_SCORE = 3;
 const DEALER_STOP_VALUE = 17;
 const DEALER_NAME = 'Dealer';
 const PLAYER_NAME = 'Player';
@@ -11,11 +12,11 @@ const RANK_VALUES = { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9,10: 10,
 
 function displayWelcomeMsg() {
   console.clear();
-  console.log(`Welcome to ${GAME_VALUE}!\n`);
+  console.log(`Welcome to ${GAME_VALUE}!\nFirst to score ${MAX_SCORE}, wins the game\n`);
 }
 
 function displayGoodbyeMsg() {
-  console.log(`Thanks for playing ${GAME_VALUE}`);
+  console.log(`\nThanks for playing ${GAME_VALUE}`);
 }
 
 function createDeck() {
@@ -139,40 +140,51 @@ function dealerTurn(playerHand, dealerHand, deck) {
   }
 }
 
-function calculateWinner(playerHand, dealerHand) {
-  let playerScore = handValue(playerHand);
-  let dealerScore = handValue(dealerHand);
-  if (playerScore > dealerScore) {
-    return PLAYER_NAME;
-  } else if (dealerScore > playerScore) {
-    return DEALER_NAME;
+function calculateResult(playerHand, dealerHand) {
+  if (busted(playerHand)) {
+    return `${PLAYER_NAME} busted`;
+  } else if (busted(dealerHand)) {
+    return `${DEALER_NAME} busted`;
+  } else if (handValue(playerHand) > handValue(dealerHand)) {
+    return `${PLAYER_NAME} wins`;
+  } else if (handValue(dealerHand) > handValue(playerHand)) {
+    return `${DEALER_NAME} wins`;
   } else {
     return 'tie';
   }
 }
 
-function displayWinner(winner) {
-  if (winner === 'tie') {
-    console.log(`It's a tie!`);
-  } else {
-    console.log(`${winner} wins!\n`);
+function updateScore(playerScore, dealerScore, result) {
+  if (result === `${DEALER_NAME} busted` || result === `${PLAYER_NAME} wins`) {
+    playerScore += 1;
+  } else if (result === `${PLAYER_NAME} busted` || result === `${DEALER_NAME} wins`) {
+    dealerScore += 1;
   }
+  return [playerScore, dealerScore];
 }
 
-function displayBust(name, hand) {
-  console.log(`${name} busts with ${handValue(hand)}!\n`);
-}
-
-function displayResult(playerHand, dealerHand) {
-  if (busted(playerHand)) {
-    displayBust(PLAYER_NAME, playerHand);
-  } else if (busted(dealerHand)) {
-    displayBust(DEALER_NAME, dealerHand);
+function displayResult(playerHand, dealerHand, result) {
+  if (result === 'tie') {
+    console.log("It's a tie!\n");
   } else {
-    let winner = calculateWinner(playerHand, dealerHand);
-    displayWinner(winner);
+    console.log(`${result}!\n`);
   }
   displayBothHands(playerHand, dealerHand);
+  console.log();
+}
+
+function displayScore(playerScore, dealerScore) {
+  console.log(`${PLAYER_NAME} Score: ${playerScore}`);
+  console.log(`${DEALER_NAME} score: ${dealerScore}\n`);
+}
+
+function displayWinner(playerScore, dealerScore) {
+  displayScore(playerScore, dealerScore);
+  if (playerScore > dealerScore) {
+    console.log(`${PLAYER_NAME} wins!`);
+  } else {
+    console.log(`${DEALER_NAME} wins!`);
+  }
 }
 
 function playAgain() {
@@ -183,14 +195,25 @@ function playAgain() {
 
 do {
   displayWelcomeMsg();
+  let playerScore = 0;
+  let dealerScore = 0;
 
-  let deck = createDeck();
-  let playerHand = dealCards(deck, 2);
-  let dealerHand = dealCards(deck, 2);
+  while (playerScore < MAX_SCORE && dealerScore < MAX_SCORE) {
+    displayScore(playerScore, dealerScore);
+    let deck = createDeck();
+    let playerHand = dealCards(deck, 2);
+    let dealerHand = dealCards(deck, 2);
 
-  playerTurn(playerHand, dealerHand, deck);
-  dealerTurn(playerHand, dealerHand, deck);
-  displayResult(playerHand, dealerHand);
+    playerTurn(playerHand, dealerHand, deck);
+    dealerTurn(playerHand, dealerHand, deck);
+    let result = calculateResult(playerHand, dealerHand);
+    [playerScore, dealerScore] = updateScore(playerScore, dealerScore, result);
+    displayResult(playerHand, dealerHand, result);
+    displayScore(playerScore, dealerScore);
+    READLINE.question('Enter any key to continue');
+    console.clear();
+  }
+  displayWinner(playerScore, dealerScore);
 } while (playAgain());
 
 displayGoodbyeMsg();
