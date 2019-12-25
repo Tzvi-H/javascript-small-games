@@ -27,6 +27,7 @@ function shuffleDeck(deck) {
     let randomIndex = Math.floor(Math.random() * (idx + 1));
     [deck[idx], deck[randomIndex]] = [deck[randomIndex], deck[idx]];
   }
+  return deck;
 }
 
 function dealCard(deck) {
