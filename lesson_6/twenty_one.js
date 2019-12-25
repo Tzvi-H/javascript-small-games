@@ -19,8 +19,7 @@ function createDeck() {
       deck.push({suit: suit, rank: rank});
     });
   });
-  shuffleDeck(deck);
-  return deck;
+  return shuffleDeck(deck);
 }
 
 function shuffleDeck(deck) {
@@ -40,6 +39,10 @@ function dealCards(deck, dealCount) {
     cards.push(dealCard(deck));
   }
   return cards;
+}
+
+function addCardToHand(hand, deck) {
+  hand.push(dealCard(deck));
 }
 
 function cardValue(card) {
@@ -85,6 +88,11 @@ function displayLastCard(hand, name) {
   console.log(`${name} is dealt the ${lastCard}\n`);
 }
 
+function displayBothHands(playerHand, dealerHand) {
+  displayFullCards(playerHand, PLAYER_NAME);
+  displayFullCards(dealerHand, DEALER_NAME);
+}
+
 function promptStay() {
   console.log('\nHit(h) or Stay(s)?');
   let input = retrieveValidInput(['hit', 'h', 'stay', 's']);
@@ -105,8 +113,23 @@ function busted(hand) {
   return handValue(hand) > 21;
 }
 
-function addCardToHand(hand, deck) {
-  hand.push(dealCard(deck));
+function playerTurn(playerHand, dealerHand, deck) {
+  while (true) {
+    displayFullCards(playerHand, PLAYER_NAME);
+    displayPartialCards(dealerHand, DEALER_NAME);
+    if (promptStay()) break;
+    addCardToHand(playerHand, deck);
+    displayLastCard(playerHand, PLAYER_NAME);
+    if (busted(playerHand)) break;
+  }
+}
+
+function dealerTurn(playerHand, dealerHand, deck) {
+  if (!busted(playerHand)) {
+    while (handValue(dealerHand) < 17) {
+      addCardToHand(dealerHand, deck);
+    }
+  }
 }
 
 function calculateWinner(playerHand, dealerHand) {
@@ -133,30 +156,17 @@ function displayBust(name, hand) {
   console.log(`${name} busts with ${handValue(hand)}!\n`);
 }
 
-function displayBothHands(playerHand, dealerHand) {
-  displayFullCards(playerHand, PLAYER_NAME);
-  displayFullCards(dealerHand, DEALER_NAME);
-}
-
-function playerTurn(playerHand, dealerHand, deck) {
-  while (true) {
-    displayFullCards(playerHand, PLAYER_NAME);
-    displayPartialCards(dealerHand, DEALER_NAME);
-    if (promptStay()) break;
-    addCardToHand(playerHand, deck);
-    displayLastCard(playerHand, PLAYER_NAME);
-    if (busted(playerHand)) break;
+function displayResult(playerHand, dealerHand) {
+  if (busted(playerHand)) {
+    displayBust(PLAYER_NAME, playerHand);
+  } else if (busted(dealerHand)) {
+    displayBust(DEALER_NAME, dealerHand);
+  } else {
+    let winner = calculateWinner(playerHand, dealerHand);
+    displayWinner(winner);
   }
+  displayBothHands(playerHand, dealerHand);
 }
-
-function dealerTurn(playerHand, dealerHand, deck) {
-  if (!busted(playerHand)) {
-    while (handValue(dealerHand) < 17) {
-      addCardToHand(dealerHand, deck);
-    }
-  }
-}
-
 
 displayWelcomeMsg();
 
@@ -166,14 +176,4 @@ let dealerHand = dealCards(deck, 2);
 
 playerTurn(playerHand, dealerHand, deck);
 dealerTurn(playerHand, dealerHand, deck);
-
-if (busted(playerHand)) {
-  displayBust(PLAYER_NAME, playerHand);
-} else if (busted(dealerHand)) {
-  displayBust(DEALER_NAME, dealerHand);
-} else {
-  let winner = calculateWinner(playerHand, dealerHand);
-  displayWinner(winner);
-}
-
-displayBothHands(playerHand, dealerHand);
+displayResult(playerHand, dealerHand);
