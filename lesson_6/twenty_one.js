@@ -210,7 +210,7 @@ do {
     [playerScore, dealerScore] = updateScore(playerScore, dealerScore, result);
     displayResult(playerHand, dealerHand, result);
     displayScore(playerScore, dealerScore);
-    READLINE.question('Enter any key to continue');
+    READLINE.question('Hit the Enter key to continue\n');
     console.clear();
   }
   displayWinner(playerScore, dealerScore);
